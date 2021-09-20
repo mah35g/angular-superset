@@ -1,0 +1,39 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      <h1>
+        <span *ngIf="originalDashboard?.id; else prompt"
+          >Description {{ originalDashboard.name }}</span
+        >
+        <ng-template #prompt>Description</ng-template>
+      </h1>
+    </mat-card-title>
+  </mat-card-header>
+  <form [formGroup]="dashboardForm" #f="ngForm">
+    <mat-card-content>
+      <mat-form-field class="full-width">
+        <input matInput placeholder="Name" formControlName="name" type="text" />
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <input
+          matInput
+          placeholder="Url"
+          formControlName="url"
+          type="text"
+        />
+      </mat-form-field>
+      <mat-form-field class="full-width">
+        <input
+          matInput
+          placeholder="Status"
+          formControlName="status"
+          type="text"
+        />
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions>
+      <button type="button" mat-button (click)="cancel.emit()">Cancel</button>
+    </mat-card-actions>
+  </form>
+</mat-card>
+<div></div>

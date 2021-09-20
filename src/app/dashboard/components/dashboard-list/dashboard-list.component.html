@@ -1,0 +1,31 @@
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      <h1>Dashboard</h1>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item
+        *ngFor="let dashboard of dashboards"
+        (click)="select.emit(dashboard)"
+        class="record"
+      >
+        <!-- <h3 [ngStyle]="{'font-weight': (currentDashboard.id === dashboard.id) ? 'bold' : ''}" mat-line> -->
+        <h3 mat-line>
+          {{ dashboard.dashboard_title }}
+        </h3>
+        <p mat-line>
+          {{ dashboard.description }}
+        </p>
+        <button
+          *ngIf="!readonly"
+          mat-icon-button
+          (click)="$event.stopImmediatePropagation()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

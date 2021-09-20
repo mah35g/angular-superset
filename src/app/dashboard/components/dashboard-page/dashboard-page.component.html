@@ -1,0 +1,17 @@
+<div class="container">
+  <div class="col-50">
+
+    <app-dashboard-list
+      [dashboards]="dashboard$ | async"
+      [currentDashboard]="currentDashboard$ | async"
+      (select)="onSelect($event)"
+    >
+    </app-dashboard-list>
+  </div>
+
+  <app-dashboard-detail
+    class="col-50"
+    [currentDashboard]="currentDashboard$ | async"
+  >
+  </app-dashboard-detail>
+</div>
