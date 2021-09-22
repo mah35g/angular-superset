@@ -24,7 +24,14 @@
   </mat-sidenav>
 
   <div class="app-content">
-    <app-dashboard></app-dashboard>
+    <ng-container *ngIf="enableDashboard">
+      <app-dashboard></app-dashboard>
+    </ng-container>
+    <ng-container *ngIf="!enableDashboard">
+      <div style="text-align: center; margin: 20px">
+        Please wait...
+      </div>
+    </ng-container>
   </div>
 
 </mat-sidenav-container>

@@ -18,13 +18,6 @@
         <p mat-line>
           {{ dashboard.description }}
         </p>
-        <button
-          *ngIf="!readonly"
-          mat-icon-button
-          (click)="$event.stopImmediatePropagation()"
-        >
-          <mat-icon>close</mat-icon>
-        </button>
       </mat-list-item>
     </mat-list>
   </mat-card-content>

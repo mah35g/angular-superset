@@ -13,4 +13,3 @@ export interface DashboardModel {
 }
 
 export type DashboardRequiredProps = Pick<DashboardModel, "id" | "dashboard_title">;
-

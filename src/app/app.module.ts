@@ -10,6 +10,8 @@ import { MaterialModule } from "./material.module";
 import { reducers, metaReducers } from "./shared/state";
 import { DashboardModule } from "./dashboard";
 import { AppComponent } from "./app.component";
+import { httpInterceptorProviders } from "./interceptors";
+import { AuthApiEffects } from "./auth/auth-api.effects";
 
 @NgModule({
   declarations: [AppComponent],
@@ -18,14 +20,15 @@ import { AppComponent } from "./app.component";
     BrowserAnimationsModule,
     HttpClientModule,
     RouterModule.forRoot([
-      { path: "", pathMatch: "full", redirectTo: "/dashboard" }
+      // { path: "", pathMatch: "full", redirectTo: "/dashboard" }
     ]),
     StoreModule.forRoot(reducers, { metaReducers }),
     StoreDevtoolsModule.instrument(),
-    EffectsModule.forRoot([]),
+    EffectsModule.forRoot([AuthApiEffects]),
     MaterialModule,
     DashboardModule
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  providers: [httpInterceptorProviders]
 })
 export class AppModule {}
