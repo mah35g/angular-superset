@@ -1,7 +1,16 @@
+mat-card-content {
+  height: 75vh;
+  overflow-y: scroll;
+}
+
 mat-list-item:not(:first-of-type) {
   border-top: 1px solid #efefef;
 }
 
 .symbol {
   color: #777;
+}
+
+.noData {
+  margin: 30px 10px;
 }

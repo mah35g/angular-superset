@@ -1,28 +1,56 @@
 import { createReducer, on, Action } from "@ngrx/store";
-import { createEntityAdapter } from "@ngrx/entity";
-import { AuthTokenModel } from "src/app/shared/models";
-import { AuthApiActions } from "src/app/auth/actions";
+import { UserModel } from "src/app/shared/models";
+import { AuthApiActions, AuthUserActions } from "src/app/auth/actions";
 
-export interface State extends AuthTokenModel {
-  access_token: string | null;
-  refresh_token: string | null;
+export interface State {
+  status: boolean;
+  user: UserModel | null;
+  error: string | null;
 }
 
-export const adapter = createEntityAdapter<AuthTokenModel>();
-
 export const initialState: State = {
-  access_token: null,
-  refresh_token: null
+  status: true,
+  user: null,
+  error: null
 };
 
 export const authReducer = createReducer(
   initialState,
-  on(AuthApiActions.tokensReceived, (state, action) => {
+  on(AuthUserActions.logout, (state, action) => {
     return {
-      ...state,
-      access_token: action.access_token,
-      refresh_token: action.refresh_token
-    }
+      status: false,
+      user: null,
+      error: null
+    };
+  }),
+  on(AuthUserActions.login, (state, action) => {
+    return {
+      status: true,
+      user: null,
+      error: null
+    };
+  }),
+  on(AuthApiActions.getAuthStatusSuccess, (state, action) => {
+    return {
+      status: false,
+      user: action.user,
+      error: null
+    };
+  }),
+  on(AuthApiActions.loginSuccess, (state, action) => {
+    localStorage.setItem('auth', JSON.stringify(action.user));
+    return {
+      status: false,
+      user: action.user,
+      error: null
+    };
+  }),
+  on(AuthApiActions.loginFailure, (state, action) => {
+    return {
+      status: false,
+      user: null,
+      error: action.message
+    };
   })
 );
 
@@ -30,4 +58,6 @@ export function reducer(state: State | undefined, action: Action) {
   return authReducer(state, action);
 }
 
-export const { selectAll, selectEntities } = adapter.getSelectors();
+export const selectStatus = (state: State) => state.status;
+export const selectUser = (state: State) => state.user;
+export const selectError = (state: State) => state.error;

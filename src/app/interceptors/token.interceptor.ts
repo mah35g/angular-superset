@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { select, Store } from '@ngrx/store';
-import { State, selectAuthState } from 'src/app/shared/state';
-import { first, mergeMap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { State } from 'src/app/shared/state';
+import { catchError } from 'rxjs/operators';
+import { AuthUserActions } from '../auth/actions';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
@@ -12,33 +13,43 @@ export class TokenInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler):
     Observable<HttpEvent<any>> {
-        if (req.url.includes('security/login')) {
-          return next.handle(req);
-        }
+        return this.needsAccessToken(req) ?
+                this.nextHandle(this.addAccessToken(req), next) :
+                this.nextHandle(req, next);
+  }
 
-        if (req.url.includes('api/v1')) {
-          return this.addAccessToken(req).pipe(
-            first(),
-            mergeMap((reqWithToken: HttpRequest<any>) => next.handle(reqWithToken))
-          );
+  nextHandle(req: HttpRequest<any>, next: HttpHandler) {
+    return next.handle(req).pipe(
+      catchError(err => {
+        if (err && err.status === 401) {
+          this.store$.dispatch(AuthUserActions.logout());
         }
-
-        return next.handle(req);
+        return throwError(err);
+      })
+    );
   }
 
   addAccessToken(req: HttpRequest<any>) {
-    return this.store$.pipe(
-      select(selectAuthState),
-      first(),
-      mergeMap((token: any) => {
-        if (token.access_token) {
-          req = req.clone({
-            headers: req.headers.set('Authorization', `Bearer ${token.access_token}`)
-          });
-        }
+    const auth = localStorage.getItem('auth');
+    const userModel = auth ? JSON.parse(auth) : null;
+    if (userModel && userModel.access_token) {
+      return req.clone({
+        headers: req.headers.set('Authorization', `Bearer ${userModel.access_token}`)
+      });
+    }
 
-        return of(req);
-      })
-    );
+    return req;
+  }
+
+  needsAccessToken(req: HttpRequest<any>) {
+    if (req.url.includes('api/v1/security/login')) {
+      return false;
+    }
+
+    if (req.url.includes('api/v1')) {
+      return true;
+    }
+
+    return false;
   }
 }

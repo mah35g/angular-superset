@@ -1,47 +1,68 @@
 import { createReducer, on, Action, createSelector } from "@ngrx/store";
-import { createEntityAdapter, EntityState } from "@ngrx/entity";
 import { DashboardModel } from "src/app/shared/models";
 import { DashboardPageActions, DashboardApiActions } from "src/app/dashboard/actions";
 
-export interface State extends EntityState<DashboardModel> {
+export interface State {
+  dashboards: DashboardModel[];
   activeDashboardId: number | null;
+  activeDashboard: any | null;
 }
 
-export const adapter = createEntityAdapter<DashboardModel>();
-
-export const initialState: State = adapter.getInitialState({
-  activeDashboardId: null
-});
+export const initialState: State = {
+  activeDashboardId: null,
+  activeDashboard: null,
+  dashboards: []
+};
 
 export const dashboardReducer = createReducer(
   initialState,
   on(DashboardApiActions.dashboardLoaded, (state, action) => {
-    return adapter.addAll(action.dashboard, state);
-  }),
-  on(DashboardPageActions.clearSelectedDashboard, DashboardPageActions.enter, state => {
     return {
       ...state,
+      dashboards: action.dashboard
+    };
+  }),
+  on(DashboardPageActions.clearSelectedDashboard, DashboardPageActions.enter, state => {
+    return { ...state, activeDashboardId: null };
+  }),
+  on(DashboardPageActions.selectDashboard, (state, action) => {
+    let currentDashboard = state.dashboards.find(d => d.id === action.id);
+    return {
+      ...state,
+      activeDashboardId: action.id,
+      activeDashboard: currentDashboard
+    };
+  }),
+  on(DashboardPageActions.resetDashboard, (state, action) => {
+    return {
+      ...state,
+      dashboards: [],
       activeDashboardId: null
     };
   }),
-  on(DashboardPageActions.selectDashboard, (state, action) => {
+  on(DashboardApiActions.dashboardChartsLoaded, (state, action) => {
+    let current = { ...state.activeDashboard };
+    current.charts = action.charts;
     return {
       ...state,
-      activeDashboardId: action.id
+      activeDashboard: current
     };
   }),
+  on(DashboardApiActions.dashboardDatasetsLoaded, (state, action) => {
+    let current = { ...state.activeDashboard };
+    current.datasets = action.datasets;
+    return {
+      ...state,
+      activeDashboard: current
+    };
+  })
 );
 
 export function reducer(state: State | undefined, action: Action) {
   return dashboardReducer(state, action);
 }
 
-export const { selectAll, selectEntities } = adapter.getSelectors();
 export const selectActiveDashboardId = (state: State) => state.activeDashboardId;
-export const selectActiveDasboard = createSelector(
-  selectEntities,
-  selectActiveDashboardId,
-  (dashboardEntities, activeDashboardId) => {
-    return activeDashboardId ? dashboardEntities[activeDashboardId]! : null;
-  }
-);
+export const selectActiveDasboard = (state: State) => {
+  return state.activeDashboard;
+};

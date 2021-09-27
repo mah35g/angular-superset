@@ -1,5 +1,4 @@
 import { createAction, props } from "@ngrx/store";
-import { DashboardRequiredProps } from "src/app/shared/models";
 
 export const enter = createAction("[Dashboard Page] Enter");
 
@@ -10,4 +9,8 @@ export const selectDashboard = createAction(
 
 export const clearSelectedDashboard = createAction(
   "[Dashboard Page] Clear Selected Dashboard"
+);
+
+export const resetDashboard = createAction(
+  "[Dashboard Page] Reset Dashboard"
 );

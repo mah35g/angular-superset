@@ -11,10 +11,32 @@ export class DashboardApiEffects {
   loadDashboard$ = createEffect(() =>
     this.actions$.pipe(
       ofType(DashboardPageActions.enter),
-      exhaustMap(() =>
+      concatMap(() =>
         this.dashboardService
           .all()
           .pipe(map(dashboard => DashboardApiActions.dashboardLoaded({ dashboard: dashboard.result })))
+      )
+    )
+  );
+
+  loadDashboardCharts$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(DashboardPageActions.selectDashboard),
+      concatMap((action) =>
+        this.dashboardService
+          .loadDashboardCharts(action.id)
+          .pipe(map(charts => DashboardApiActions.dashboardChartsLoaded({ charts: charts.result })))
+      )
+    )
+  );
+
+  loadDashboardDatasets$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(DashboardPageActions.selectDashboard),
+      concatMap((action) =>
+        this.dashboardService
+          .loadDashboardDatasets(action.id)
+          .pipe(map(datasets => DashboardApiActions.dashboardDatasetsLoaded({ datasets: datasets.result })))
       )
     )
   );

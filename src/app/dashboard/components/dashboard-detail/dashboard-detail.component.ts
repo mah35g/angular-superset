@@ -1,6 +1,10 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { FormGroup, FormControl } from "@angular/forms";
+import { Store } from "@ngrx/store";
 import { DashboardModel } from "src/app/shared/models";
+import { State } from "src/app/shared/state";
+import { environment } from '../../../../environments/environment';
+import { DashboardPageActions } from "../../actions";
 
 @Component({
   selector: "app-dashboard-detail",
@@ -9,14 +13,14 @@ import { DashboardModel } from "src/app/shared/models";
 })
 export class DashboardDetailComponent {
   originalDashboard: DashboardModel | undefined;
-  @Output() save = new EventEmitter();
-  @Output() cancel = new EventEmitter();
+  displayedColumns: string[] = ['slice_name', 'slice_url'];
+  apiTarget = environment.apiTarget;
 
   dashboardForm = new FormGroup({
-    name: new FormControl(""),
-    status: new FormControl(""),
-    url: new FormControl("")
+    name: new FormControl("")
   });
+
+  constructor(private store: Store<State>) {}
 
   @Input() set currentDashboard(currentDashboard: DashboardModel) {
     this.dashboardForm.reset();
@@ -24,12 +28,14 @@ export class DashboardDetailComponent {
 
     if (currentDashboard) {
       this.dashboardForm.setValue({
-        name: currentDashboard.dashboard_title,
-        status: currentDashboard.status,
-        url: currentDashboard.url
+        name: currentDashboard.dashboard_title
       });
 
       this.originalDashboard = currentDashboard;
     }
+  }
+
+  clearDashboardDescription() {
+    this.store.dispatch(DashboardPageActions.clearSelectedDashboard());
   }
 }

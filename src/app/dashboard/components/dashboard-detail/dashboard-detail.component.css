@@ -7,3 +7,6 @@ mat-card-header {
 .full-width {
   width: 100%;
 }
+.dashboard-fields {
+  margin: 10px 0px;
+}

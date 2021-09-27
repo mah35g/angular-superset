@@ -1,10 +1,17 @@
-import { createAction, props } from "@ngrx/store";
+import { createAction } from "@ngrx/store";
+import { UserModel } from "src/app/shared/models";
 
-export const requestTokens = createAction(
-    "[Security API] Request JWT Access Token"
+export const getAuthStatusSuccess = createAction(
+    "[Auth/API] Get Auth Status Success",
+    (user: UserModel | null) => ({ user })
 );
 
-export const tokensReceived = createAction(
-    "[Security API] Request JWT Access Token Success",
-    props<{ access_token: string | null, refresh_token: string | null }>()
+export const loginSuccess = createAction(
+    "[Auth/API] Login Success",
+    (user: UserModel) => ({ user })
+);
+
+export const loginFailure = createAction(
+    "[Auth/API] Login Failure",
+    (message: string) => ({ message })
 );

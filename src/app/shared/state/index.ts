@@ -19,18 +19,24 @@ export const metaReducers: MetaReducer<State>[] = [logoutMetareducer];
  * Auth Selectors
  */
 export const selectAuthState = (state: State) => state.auth;
-export const selectAccessTokenState = (state: State) => {
-  return state.auth ? state.auth.access_token : null;
-}
+export const selectAuthStatus = createSelector(
+  selectAuthState,
+  fromAuth.selectStatus
+);
+export const selectAuthUser = createSelector(
+  selectAuthState,
+  fromAuth.selectUser
+);
+export const selectAuthError = createSelector(
+  selectAuthState,
+  fromAuth.selectError
+);
 
 /**
  * Dashboard Selectors
  */
 export const selectDashboardState = (state: State) => state.dashboard;
-export const selectAllDashboard = createSelector(
-  selectDashboardState,
-  fromDashboard.selectAll
-);
+export const selectAllDashboard = (state: State) => state.dashboard ? state.dashboard.dashboards : [];
 export const selectActiveDashboard = createSelector(
   selectDashboardState,
   fromDashboard.selectActiveDasboard

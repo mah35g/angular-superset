@@ -1,39 +1,39 @@
-<mat-card>
+<mat-card *ngIf="originalDashboard?.id">
   <mat-card-header>
     <mat-card-title>
       <h1>
-        <span *ngIf="originalDashboard?.id; else prompt"
-          >Description {{ originalDashboard.name }}</span
-        >
-        <ng-template #prompt>Description</ng-template>
+        <span> {{ originalDashboard.dashboard_title }}</span>
       </h1>
     </mat-card-title>
   </mat-card-header>
   <form [formGroup]="dashboardForm" #f="ngForm">
     <mat-card-content>
-      <mat-form-field class="full-width">
-        <input matInput placeholder="Name" formControlName="name" type="text" />
-      </mat-form-field>
-      <mat-form-field class="full-width">
-        <input
-          matInput
-          placeholder="Url"
-          formControlName="url"
-          type="text"
-        />
-      </mat-form-field>
-      <mat-form-field class="full-width">
-        <input
-          matInput
-          placeholder="Status"
-          formControlName="status"
-          type="text"
-        />
-      </mat-form-field>
+      <div class="dashboard-fields"><b>Status: </b>{{originalDashboard.status}}</div>
+      <div class="dashboard-fields"><b>Last changed: </b>{{originalDashboard.changed_on_delta_humanized}}</div>
+      <div class="dashboard-fields">
+        <a href="{{apiTarget + originalDashboard.url}}" target="_blank">Open Dashboard in Superset</a>
+      </div>
     </mat-card-content>
-    <mat-card-actions>
-      <button type="button" mat-button (click)="cancel.emit()">Cancel</button>
+    <mat-card-actions *ngIf="originalDashboard && originalDashboard.id">
     </mat-card-actions>
+    <mat-card-content *ngIf="originalDashboard?.charts?.length">
+      <h3>Charts</h3>
+      <table mat-table [dataSource]="originalDashboard?.charts">
+        <ng-container matColumnDef="slice_name">
+          <th mat-header-cell *matHeaderCellDef> Chart Name</th>
+          <td mat-cell *matCellDef="let element"> {{element.slice_name}} </td>
+        </ng-container>
+        <ng-container matColumnDef="slice_url">
+          <th mat-header-cell *matHeaderCellDef> Chart Link</th>
+          <td mat-cell *matCellDef="let element">
+            <a href="{{apiTarget + element.slice_url}}" target="_blank"><mat-icon>exit_to_app</mat-icon></a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </mat-card-content>
   </form>
 </mat-card>
 <div></div>

@@ -9,6 +9,7 @@
 
 <mat-sidenav-container>
   <mat-sidenav #sidenav mode="side" class="app-sidenav">
+    <app-user></app-user>
     <nav>
       <a
         mat-button
@@ -24,14 +25,7 @@
   </mat-sidenav>
 
   <div class="app-content">
-    <ng-container *ngIf="enableDashboard">
-      <app-dashboard></app-dashboard>
-    </ng-container>
-    <ng-container *ngIf="!enableDashboard">
-      <div style="text-align: center; margin: 20px">
-        Please wait...
-      </div>
-    </ng-container>
+    <app-login-page></app-login-page>
   </div>
 
 </mat-sidenav-container>

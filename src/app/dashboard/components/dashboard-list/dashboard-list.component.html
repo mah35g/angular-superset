@@ -11,14 +11,16 @@
         (click)="select.emit(dashboard)"
         class="record"
       >
-        <!-- <h3 [ngStyle]="{'font-weight': (currentDashboard.id === dashboard.id) ? 'bold' : ''}" mat-line> -->
-        <h3 mat-line>
+        <h3 mat-line [ngStyle]="{'font-weight': (currentDashboard && dashboard && currentDashboard.id === dashboard.id) ? 'bold' : ''}">
           {{ dashboard.dashboard_title }}
         </h3>
         <p mat-line>
-          {{ dashboard.description }}
+          {{ dashboard.status }}
         </p>
       </mat-list-item>
     </mat-list>
+    <div *ngIf="!dashboards || !dashboards.length" class="noData">
+      No Data
+    </div>
   </mat-card-content>
 </mat-card>
